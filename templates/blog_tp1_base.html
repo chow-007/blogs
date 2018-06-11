@@ -1,0 +1,87 @@
+{% load my_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>博主中心</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7/css/bootstrap.min.css">
+    <script src="/static/plugins/jquery-3.2.1.min.js"></script>
+    <script src="/static/plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+</body>
+<body>
+
+
+<nav class="navbar  navbar-static-top  navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">{{ username }}</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">博客园</a></li>
+                <li><a href="#">首页</a></li>
+                <li><a href="#">新随笔</a></li>
+                <li><a href="#">联系</a></li>
+                <li><a href="#">管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container-fluid">
+
+    <div class="col-sm-3">
+        {% get_archive_tag username %}
+    </div>
+
+    <div class="col-sm-8">
+        {% block content %}
+            {% for article in article_list %}
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <div class="row"><h5 style="padding: 10px 0;border-bottom: 1px solid #EEEEEE"><a
+                                        href="/{{ username }}/p/{{ article.pk }}.html/">{{ article.title }}</a></h5></div>
+                                <div class="row">
+                                    <p>
+                                        {{ article.desc }}
+                                    </p>
+
+                                </div>
+                                <div class="row pull-right">
+                                    <a href="#">{{ article.user.nickname }}</a>
+                                    <span>发布于&nbsp;{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
+                                    <a href="#">评论&nbsp;&#40;{{ article.comment_count }}&#41;</a>
+                                    <a href="#">踩&nbsp;&#40;{{ article.down_count }}&#41;</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endblock %}
+    </div>
+
+</div>
+
+
+
+
+</body>
+</html>

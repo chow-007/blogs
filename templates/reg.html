@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>注册</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/myreg.css">
+    <style>
+
+        div span {
+            color: red;
+            float: right;
+        }
+
+        .container {
+            width: 900px;
+            height: 500px;
+            margin-top: 80px;
+        }
+
+        .btn {
+            background-color: royalblue;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="head-reg">
+    <ul class="ul-left">
+        <li><img src="/static/img/logo.png" alt=""></li>
+        <li><a href="">博客园</a></li>
+    </ul>
+    <ul class="ul-right">
+        <li><a href="{% url 'home' %}">首页</a></li>
+        <li><a href="{% url 'login' %}">登录</a></li>
+        <li><a href="{% url 'reg' %}">注册</a></li>
+        <li><a href="">帮助</a></li>
+    </ul>
+</div>
+
+
+<div class="container">
+    <p>注册新用户</p>
+    <div class="box-left">
+        <div class="form-horizontal">{% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="col-sm-2 control-label">用户名</label>
+                <div class="col-sm-7">
+                    {{ form_obj.username }} <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-7">
+                    {{ form_obj.password }} <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="repeat_pwd" class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-7">
+                    {{ form_obj.repeat_pwd }} <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_email" class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-7">
+                    {{ form_obj.email }} <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_telephone" class="col-sm-2 control-label">手机</label>
+                <div class="col-sm-7">
+                    {{ form_obj.telephone }} <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="avatar" class="col-sm-4 control-label">头像&nbsp;&nbsp;
+                    <!-- 用label标签把img标签包裹起来,这样点击label标签内的图片,就等于点击input -->
+                    <img src="/static/img/default.png" id="avatar_img" width="80" height="80" alt="">
+                </label>
+                <div class="col-sm-6">
+                    <!-- 把input标签隐藏 -->
+                    <input type="file" id="avatar" style="display: none"> <span></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-7">
+                    <button class="btn btn-default">提交</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="box-right">
+        <img src="/static/img/reg-icon.png" alt="">
+    </div>
+
+
+</div>
+<script src="/static/plugins/jquery-3.2.1.min.js"></script>
+<script src="/static/plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+    $("#avatar").change(function () {
+        var choose_file = $(this)[0].files[0];
+        var reader=new FileReader();
+        reader.readAsDataURL(choose_file);
+        reader.onload=function () {
+            $("#avatar_img").attr("src", this.result)
+        }
+    });
+
+    $(".btn").click(function () {
+        var formdata=new FormData();
+        formdata.append("username", $("#id_username").val());
+        formdata.append("password", $("#id_password").val());
+        formdata.append("repeat_pwd", $("#id_repeat_pwd").val());
+        formdata.append("email", $("#id_email").val());
+        formdata.append("telephone", $("#id_telephone").val());
+        formdata.append("avatar", $("#avatar")[0].files[0]);
+        formdata.append("csrfmiddlewaretoken", $("[name='csrfmiddlewaretoken']").val());
+        $.ajax({
+            url: "/reg/",
+            type: "post",
+            data: formdata,
+            contentType:false,
+            processData:false,
+            success: function (data) {
+                data = JSON.parse(data);
+                if(data.user){
+                    location.href = '/'
+                }
+                else {
+                    $("form span").html(''); {# 清空上次的错误信息 #}
+                    $(".form-group").removeClass("has-error");
+                    $.each(data.error_msg,function (field,error_info) {
+                        {# 给输入框添加CSS属性,变红 #}
+                        $("#id_"+field).parent().addClass("has-error");
+                        {#拼接标签的id  显示当前错误信息#}
+                        $("#id_"+field).next().html(error_info[0]).css('color', 'red');
+                        if(field=='__all__'){
+                            $("#repeat_pwd").parent().addClass("has-error");
+                            $("#repeat_pwd").next().html(error_info[0]).css('color', 'red')
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+
+    $(document).keyup(function (event) {
+        if (event.keyCode === 13) {
+            $(".btn").trigger("click");
+        }
+    })
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% extends 'blog_tp1_base.html' %}
+
+
+{% block content %}
+    {{ content_obj.content|safe }}
+    {#点赞部分开始#}
+    <div class="row">
+        <div class="col-sm-3 pull-right">
+        <div class="row text-center">
+            <div class="btn bg-primary up_down">
+                <div class="badge up_count">{{ article_obj.up_count }}</div>
+                <div><span class="glyphicon glyphicon-thumbs-up"></span>推荐</div>
+            </div>
+
+            <div class="btn bg-success up_down">
+                <div class="badge down_count">{{ article_obj.down_count }}</div>
+                <div><span class="glyphicon glyphicon-thumbs-down"></span>反对</div>
+            </div>
+            <p id="error"></p>
+        </div>
+    </div>
+    </div>
+    {% csrf_token %}
+    {#点赞部分结束#}
+
+
+    {# 评论部分开始 #}
+    <h4>评论列表</h4>
+    <hr>
+    <div>
+        <ul class="media-list" id="comment">
+{#            <li class="media">#}
+{#                <div class="media-left">#}
+{#                    <a href="#">#}
+{#                        <img class="media-object" data-src="holder.js/64x64" alt="64x64"#}
+{#                             src=""#}
+{#                             data-holder-rendered="true" style="width: 64px; height: 64px;">#}
+{#                    </a>#}
+{#                </div>#}
+{#                <div class="media-body">#}
+{#                    <h4 class="media-heading small">1楼 示例</h4>#}
+{#                    <p>评论示例</p>#}
+{#                    <!-- Nested media object -->#}
+{#                    <div class="media">#}
+{#                        <div class="media-left">#}
+{#                            <a href="#">#}
+{#                                <img class="media-object" data-src="holder.js/64x64" alt="64x64"#}
+{#                                     src=""#}
+{#                                     data-holder-rendered="true" style="width: 64px; height: 64px;">#}
+{#                            </a>#}
+{#                        </div>#}
+{#                        <div class="media-body">#}
+{#                            <h4 class="media-heading">子评论示例</h4>#}
+{#                            子评论示例#}
+{#                            <!-- Nested media object -->#}
+{#                            <div class="media">#}
+{#                                <div class="media-left">#}
+{#                                    <a href="#">#}
+{#                                        <img class="media-object" data-src="holder.js/64x64" alt="64x64"#}
+{#                                             src=""#}
+{#                                             data-holder-rendered="true" style="width: 64px; height: 64px;">#}
+{#                                    </a>#}
+{#                                </div>#}
+{#                                <div class="media-body">#}
+{#                                    <h4 class="media-heading">子评论示例</h4>#}
+{#                                    子评论示例#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <!-- Nested media object -->#}
+{#                    <div class="media">#}
+{#                        <div class="media-left">#}
+{#                            <a href="#">#}
+{#                                <img class="media-object" data-src="holder.js/64x64" alt="64x64"#}
+{#                                     src=""#}
+{#                                     data-holder-rendered="true" style="width: 64px; height: 64px;">#}
+{#                            </a>#}
+{#                        </div>#}
+{#                        <div class="media-body">#}
+{#                            <h4 class="media-heading">2楼 示例</h4>#}
+{#                            2楼评论示例#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </li>#}
+        </ul>
+    </div>
+{#    <hr>#}
+    {# 评论部分结束 #}
+
+
+
+    <script>
+        $(".up_down").click(function () {
+            {# 判断点赞用户是否为登录用户 #}
+            if ("{{ request.user.username }}") {
+                {# 判断是否为点赞(true:点赞,false:反对) #}
+                var is_up = $(this).hasClass('bg-primary');
+                $.ajax({
+                    url: '/thumbs/',
+                    type: 'post',
+                    data: {
+                        "article_id": "{{ article_obj.pk }}",
+                        "is_up": is_up,
+                        "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success: function (data) {
+                        if (data.state) {
+                            if (is_up) {
+                                var v = parseInt($(".up_count").text()) + 1;
+                                $(".up_count").text(v)
+                            }
+                            else {
+                                var v = parseInt($(".down_count").text()) + 1;
+                                $(".down_count").text(v)
+                            }
+                        }
+                        else {
+                            if (data.error_first) {
+                                $("#error").text('你已经点赞过了').css('color', 'red')
+                            }
+                            else {
+                                $("#error").text('你已经反对过了').css('color', 'red')
+                            }
+                        }
+                    }
+                })
+            }
+            else {
+                $("#error").text('请先登录').css('color', 'red')
+            }
+            setTimeout(function () {
+                $("#error").text('')
+            }, 1000)
+        });
+
+
+        if (!String.format) {
+          String.format = function(format) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            return format.replace(/{(\d+)}/g, function(match, number) {
+              return typeof args[number] != 'undefined'
+                ? args[number]
+                : match
+              ;
+            });
+          };
+        }
+
+
+{#        var f = function (id) {#}
+{#            var strHTML ='<div class="media">'+#}
+{#                        '<div class="media-left">'+#}
+{#                            '<a href="#">'+#}
+{#                                '<img class="media-object" data-src="holder.js/64x64" alt="64x64"'+#}
+{#                                     'src=""'+#}
+{#                                     'data-holder-rendered="true" style="width: 64px; height: 64px;">'+#}
+{#                            '</a>'+#}
+{#                        '</div>'+#}
+{#                        '<div class="media-body" id="{0}">'+      <!-- user_id评论用户id -->#}
+{#                            '<h4 class="media-heading">2楼 评论人</h4>'+#}
+{#                            '表表'+#}
+{#                        '</div>'+#}
+{#                    '</div>'+#}
+{#                    '<hr>';#}
+{#            return strHTML;#}
+{#        };#}
+
+
+
+        var f = function (nid,user_name,content,create_time,src) {
+            var strHTML = String.format('<div class="media"><div class="media-left"><a href="#"><img class="media-object" data-src="holder.js/64x64" alt="32x32" src="/media/{4}" data-holder-rendered="true" style="width: 40px; height: 40px;"></a></div><div class="media-body" id="{0}"><h5 class="media-heading text-danger">发布时间{3} {1}</h5><p class="text-info">{2}</p></div></div>',nid,user_name,content,create_time,src);
+            return strHTML;
+        };
+
+
+        $.ajax({
+            url:'/comment/',
+            type:'post',
+            data:{article_id:"{{ article_obj.pk }}",
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function (data) {
+                data = JSON.parse(data);
+
+                for (var i=0;i<data.length;i++){
+                    console.log(data[i].user__avatar);
+                    var ele = f(data[i].nid,data[i].user__username,data[i].content,data[i].time,data[i].user__avatar);
+                    console.log(data[i].nid,data[i].user__username,data[i].content,data[i].time);
+                    if (!data[i].parent_comment_id){
+                        var val = $("#comment").html();
+                        $("#comment").html(val+'<li class="media">'+ele+'</li><hr>');
+                    }
+                    else {
+{#                        val = String.format($("#{0}").html(),data[i].parent_comment_id);#}
+{#                        console.log(String.format("{0}"),data[i].parent_comment_id);#}
+{#                        Sting.format($("#{0}").html(val+ele),data[i].parent_comment_id);#}
+                        var a = String.format("#{0}", data[i].parent_comment_id);
+                        val = $(a).html();
+                        $(a).html(val+ele)
+                    }
+                }
+            }
+        })
+
+    </script>
+{% endblock %}

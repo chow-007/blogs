@@ -1,0 +1,91 @@
+* {
+    margin: 0 0;
+    /*background-color: #F3F3F3;*/
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.head-reg {
+    width: 100%;
+    padding: 5px;
+    background-color: #283E5C;
+
+}
+
+.head-reg ul {
+    list-style: none;
+    margin: auto;
+    background-color: #283E5C;
+}
+
+.head-reg ul li {
+    display: inline;
+    height: 50px;
+    vertical-align: middle;
+    background-color: #283E5C;
+
+}
+
+.ul-left li a:hover {
+    text-decoration: none;
+}
+
+.head-reg ul li a {
+    font-size: 30px;
+    vertical-align: middle;
+    background-color: #283E5C;
+    color: white;
+}
+
+.head-reg ul li img {
+    height: 50px;
+    border-radius: 25px;
+    vertical-align: middle;
+}
+
+.head-reg .ul-left {
+    display: inline-block;
+}
+
+.head-reg .ul-right {
+    display: inline-block;
+    float: right;
+    margin-right: 20px;
+    margin-top: 12px;
+}
+
+.head-reg .ul-right li a {
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+.head-reg .ul-right li a:hover {
+    color: gray;
+}
+.container p{
+    border-bottom: 1px solid #EEEEEE;
+    font-size: 20px;
+}
+
+.box-left{
+    float: left;
+    width:70%;
+    margin-top: 30px;
+    padding: 10px 40px;
+    /*border: 1px solid red;*/
+}
+.box-right{
+    float: right;
+    margin-top: 50px;
+    width:30%;
+    border-left: 1px solid #EEEEEE;
+}
